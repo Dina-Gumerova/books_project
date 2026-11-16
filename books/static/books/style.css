@@ -1,0 +1,70 @@
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #252525;
+    background: #eeeeee;
+    line-height: 1.5;
+}
+.container { max-width: 1000px; margin: 0 auto; padding: 15px; }
+header { background: #3e5d79; color: white; }
+h1 { margin: 0 0 8px; font-size: 28px; }
+h2 { margin-top: 0; font-size: 22px; }
+h3 { margin-top: 0; font-size: 19px; }
+a { color: #234f78; }
+nav a { color: white; display: inline-block; margin-right: 20px; }
+section { margin-bottom: 25px; scroll-margin-top: 15px; }
+.genres { margin: 15px 0; }
+.genres a {
+    display: inline-block;
+    border: 1px solid #bbbbbb;
+    background: white;
+    margin: 0 5px 8px 0;
+    padding: 5px 10px;
+    text-decoration: none;
+}
+.genres .selected { background: #3e5d79; color: white; }
+.book-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+.book, .box { background: white; border: 1px solid #cccccc; padding: 18px; min-width: 0; }
+.book { overflow-wrap: anywhere; }
+.book p { margin: 7px 0; }
+.book h3 { color: #294862; margin-bottom: 12px; }
+.forms { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+label { display: block; margin-bottom: 4px; }
+input:not([type="hidden"]), select, textarea {
+    width: 100%;
+    max-width: 100%;
+    padding: 7px;
+    border: 1px solid #999999;
+    font: inherit;
+}
+textarea { resize: vertical; }
+button, .button {
+    display: inline-block;
+    border: 1px solid #294862;
+    background: #3e5d79;
+    color: white;
+    padding: 8px 14px;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+button:hover, .button:hover { background: #294862; }
+pre { padding: 12px; background: #f1f1f1; overflow-x: auto; font-size: 13px; }
+.hint, footer { color: #555555; font-size: 14px; }
+.message { background: #e5f0e0; border: 1px solid #92af83; padding: 10px; }
+.error, .errorlist { color: #a12323; overflow-wrap: anywhere; }
+.error { background: #fce8e8; padding: 10px; }
+.errorlist { padding-left: 20px; }
+.file-list { padding-left: 20px; overflow-wrap: anywhere; }
+.empty { grid-column: 1 / -1; }
+footer { border-top: 1px solid #cccccc; }
+@media (max-width: 700px) {
+    .book-list { grid-template-columns: 1fr 1fr; }
+    .forms { grid-template-columns: 1fr; gap: 0; }
+}
+@media (max-width: 480px) {
+    .book-list { grid-template-columns: 1fr; }
+    nav a { margin-right: 10px; }
+}

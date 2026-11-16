@@ -1,5 +1,113 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
-<head><meta charset="UTF-8"><title>Каталог книг</title></head>
-<body><h1>Каталог книг</h1></body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог книг</title>
+    <link rel="stylesheet" href="{% static 'books/style.css' %}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Моя библиотека</h1>
+            <nav>
+                <a href="#catalog">Каталог</a>
+                <a href="#add-book">Добавить книгу</a>
+                <a href="#upload">Загрузить файл</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <p>Каталог книг с сохранением и загрузкой данных в JSON.</p>
+        {% for message in messages %}
+            <p class="message" role="status">{{ message }}</p>
+        {% endfor %}
+        {% for error in file_errors %}
+            <p class="error" role="alert">{{ error }}</p>
+        {% endfor %}
+
+        <section id="catalog">
+            <h2>Список книг</h2>
+            <p class="stats">Всего книг: {{ total_books }} | Авторов: {{ total_authors }} | Среднее число страниц: {{ average_pages }}</p>
+            <div class="genres">
+                <a href="{% url 'books:index' %}#catalog" {% if not current_genre %}class="selected" aria-current="true"{% endif %}>Все книги</a>
+                {% for genre in genres %}
+                    <a href="?genre={{ genre|urlencode }}#catalog" {% if current_genre == genre %}class="selected" aria-current="true"{% endif %}>{{ genre }}</a>
+                {% endfor %}
+            </div>
+
+            <div class="book-list">
+                {% for book in books %}
+                    <article class="book">
+                        <h3>{{ book.title }}</h3>
+                        <p><b>Автор:</b> {{ book.author }}</p>
+                        <p><b>Год:</b> {{ book.year }} | {{ book.pages }} стр.</p>
+                        <p><b>Жанр:</b> {{ book.genre }}</p>
+                        {% if book.description %}<p>{{ book.description }}</p>{% endif %}
+                    </article>
+                {% empty %}
+                    <p class="empty">
+                        {% if current_genre %}В этом жанре пока нет книг.
+                        {% elif file_errors %}Нет книг для отображения. Проверьте ошибки файлов выше.
+                        {% else %}На сервере пока нет JSON-файлов с книгами. Добавьте книгу или загрузите файл.{% endif %}
+                    </p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="forms">
+            <section class="box" id="add-book">
+                <h2>Добавить книгу</h2>
+                <form method="post" action="{% url 'books:index' %}#add-book">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add">
+                    {{ book_form.as_p }}
+                    <button type="submit">Сохранить в JSON</button>
+                </form>
+            </section>
+
+            <section class="box" id="upload">
+                <h2>Загрузить книги</h2>
+                <p>Выберите JSON-файл размером до 1 МБ. В одном файле может быть до 1000 книг.</p>
+                <form method="post" enctype="multipart/form-data" action="{% url 'books:index' %}#upload">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="upload">
+                    {{ upload_form.as_p }}
+                    <button type="submit">Загрузить файл</button>
+                </form>
+                <h3>Пример JSON</h3>
+                <pre>{
+  "books": [
+    {
+      "title": "Новая книга",
+      "author": "Иван Иванов",
+      "year": 2020,
+      "genre": "Роман",
+      "pages": 200,
+      "description": "Краткое описание"
+    }
+  ]
+}</pre>
+                <p class="hint">Год и страницы записываются числами без кавычек. Описание можно не указывать.</p>
+            </section>
+        </div>
+
+        <section class="box">
+            <h2>Сохраненные файлы</h2>
+            {% if files %}
+                <ul class="file-list">
+                    {% for file in files %}
+                        <li><a href="{% url 'books:download_file' file.name %}">{{ file.name }}</a> — книг: {{ file.count }}</li>
+                    {% endfor %}
+                </ul>
+                <a class="button" href="{% url 'books:download_all' %}">Скачать все книги в JSON</a>
+            {% else %}
+                <p>Нет файлов для скачивания.</p>
+            {% endif %}
+        </section>
+    </main>
+    <footer class="container">Учебный проект на Django. Информация о книгах.</footer>
+</body>
 </html>
